@@ -377,6 +377,99 @@
 </span></span><span class=line><span class=cl><span class=n>prepare_result</span> <span class=o>=</span> <span class=n>prepare</span><span class=p>(</span><span class=n>flag_code</span><span class=p>,</span> <span class=mi>9</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=n>flag</span> <span class=o>=</span> <span class=s1>&#39;&#39;</span><span class=o>.</span><span class=n>join</span><span class=p>([</span><span class=nb>chr</span><span class=p>(</span><span class=n>i</span><span class=p>)</span> <span class=k>for</span> <span class=n>i</span> <span class=ow>in</span> <span class=n>prepare_result</span><span class=p>])</span>
 </span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=n>flag</span><span class=p>)</span>
+</span></span></code></pre></div><h3 id=the-loader>The loader</h3><p>First we download elf file from <a href=https://github.com/SecurityValley/PublicCTFChallenges/tree/master/reversing/the_loader>github</a>.</p><p>Then we use Ghidra to decompile this elf file.</p><p><code>main</code> function:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=kt>void</span> <span class=nf>main</span><span class=p>(</span><span class=kt>void</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>undefined8</span> <span class=n>uVar1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=kt>long</span> <span class=n>in_FS_OFFSET</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>uint</span> <span class=n>local_1c</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>undefined</span> <span class=o>*</span><span class=n>local_18</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>undefined8</span> <span class=n>local_10</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  
+</span></span><span class=line><span class=cl>  <span class=n>local_10</span> <span class=o>=</span> <span class=o>*</span><span class=p>(</span><span class=n>undefined8</span> <span class=o>*</span><span class=p>)(</span><span class=n>in_FS_OFFSET</span> <span class=o>+</span> <span class=mh>0x28</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=n>local_18</span> <span class=o>=</span> <span class=o>&amp;</span><span class=n>DAT_00102018</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>local_1c</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=k>do</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nf>adjustCounter</span><span class=p>(</span><span class=o>&amp;</span><span class=n>local_1c</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>uVar1</span> <span class=o>=</span> <span class=nf>getHop</span><span class=p>(</span><span class=n>local_1c</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=nf>printf</span><span class=p>(</span><span class=s>&#34;%d.%s </span><span class=se>\n\n</span><span class=s>Wouldn</span><span class=se>\&#39;</span><span class=s>t it be cool to be able to look into the memory?</span><span class=se>\n\n</span><span class=s>&#34;</span><span class=p>,(</span><span class=n>ulong</span><span class=p>)</span><span class=n>local_1c</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>           <span class=n>uVar1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=nf>huuu</span><span class=p>(</span><span class=n>local_18</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>local_1c</span> <span class=o>=</span> <span class=n>local_1c</span> <span class=o>+</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=nf>sleep</span><span class=p>(</span><span class=mi>1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span> <span class=k>while</span><span class=p>(</span> <span class=nb>true</span> <span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p><code>adjustCounter</code> function and <code>getHop</code> function are just change the value of <code>local_1c</code> and return a string.</p><p>The most critical is the <code>huuu</code> function:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=kt>void</span> <span class=nf>huuu</span><span class=p>(</span><span class=n>undefined8</span> <span class=n>param_1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>undefined8</span> <span class=n>uVar1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>undefined8</span> <span class=n>uVar2</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  
+</span></span><span class=line><span class=cl>  <span class=n>uVar1</span> <span class=o>=</span> <span class=nf>load_s_mem</span><span class=p>(</span><span class=n>param_1</span><span class=p>,</span><span class=mh>0xfe</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=n>uVar2</span> <span class=o>=</span> <span class=nf>get_str_size</span><span class=p>(</span><span class=n>uVar1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=nf>unload_mem</span><span class=p>(</span><span class=n>uVar1</span><span class=p>,</span><span class=n>uVar2</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>In this function, the <code>load_s_mem</code> function is called to load the memory and do some processing, and then the <code>unload_mem</code> function is called to unload the memory.</p><p>The <code>load_s_mem</code> function is shown below:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=kt>void</span> <span class=o>*</span> <span class=nf>load_s_mem</span><span class=p>(</span><span class=kt>void</span> <span class=o>*</span><span class=n>param_1</span><span class=p>,</span><span class=n>byte</span> <span class=n>param_2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=kt>size_t</span> <span class=n>__size</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=kt>void</span> <span class=o>*</span><span class=n>__dest</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=kt>int</span> <span class=n>local_1c</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  
+</span></span><span class=line><span class=cl>  <span class=n>__size</span> <span class=o>=</span> <span class=nf>get_str_size</span><span class=p>(</span><span class=n>param_1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=n>__dest</span> <span class=o>=</span> <span class=nf>malloc</span><span class=p>(</span><span class=n>__size</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=nf>memcpy</span><span class=p>(</span><span class=n>__dest</span><span class=p>,</span><span class=n>param_1</span><span class=p>,</span><span class=n>__size</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=k>for</span> <span class=p>(</span><span class=n>local_1c</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=p>(</span><span class=n>ulong</span><span class=p>)(</span><span class=kt>long</span><span class=p>)</span><span class=n>local_1c</span> <span class=o>&lt;</span> <span class=n>__size</span><span class=p>;</span> <span class=n>local_1c</span> <span class=o>=</span> <span class=n>local_1c</span> <span class=o>+</span> <span class=mi>1</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=o>*</span><span class=p>(</span><span class=n>byte</span> <span class=o>*</span><span class=p>)((</span><span class=kt>long</span><span class=p>)</span><span class=n>__dest</span> <span class=o>+</span> <span class=p>(</span><span class=kt>long</span><span class=p>)</span><span class=n>local_1c</span><span class=p>)</span> <span class=o>=</span> <span class=o>*</span><span class=p>(</span><span class=n>byte</span> <span class=o>*</span><span class=p>)((</span><span class=kt>long</span><span class=p>)</span><span class=n>__dest</span> <span class=o>+</span> <span class=p>(</span><span class=kt>long</span><span class=p>)</span><span class=n>local_1c</span><span class=p>)</span> <span class=o>^</span> <span class=n>param_2</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=o>*</span><span class=p>(</span><span class=n>undefined</span> <span class=o>*</span><span class=p>)(</span><span class=n>__size</span> <span class=o>+</span> <span class=p>(</span><span class=kt>long</span><span class=p>)</span><span class=n>__dest</span><span class=p>)</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=n>__dest</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>Maybe this function will calculate the flag, but we don&rsquo;t know the value of <code>param_1</code> and <code>param_2</code>.</p><p>Combining <code>main</code> and <code>huuu</code>, we know that <code>param_1</code> is the value of <code>local_18</code> in <code>main</code> (that is <code>&amp;DAT_00102018</code>) and <code>param_2</code> is <code>0xfe</code>.</p><p>The data in DAT_00102018 is:</p><pre tabindex=0><code class=language-assembly data-lang=assembly>  DAT_00102018                                    XREF[3]:     main:001013b3(*), 
+                                                               main:001013ba(*), 
+                                                               main:001013fb(*)  
+00102018 ad              ??         ADh
+00102019 9b              ??         9Bh
+0010201a 9d              ??         9Dh
+0010201b a8              ??         A8h
+0010201c 9f              ??         9Fh
+0010201d 92              ??         92h
+0010201e 85              ??         85h
+0010201f 89              ??         89h
+00102020 ca              ??         CAh
+00102021 a7              ??         A7h
+00102022 a1              ??         A1h
+00102023 c9              ??         C9h
+00102024 ce              ??         CEh
+00102025 a1              ??         A1h
+00102026 96              ??         96h
+00102027 ca              ??         CAh
+00102028 8c              ??         8Ch
+00102029 ba              ??         BAh
+0010202a a1              ??         A1h
+0010202b b8              ??         B8h
+0010202c ce              ??         CEh
+0010202d ac              ??         ACh
+0010202e a1              ??         A1h
+0010202f a7              ??         A7h
+00102030 ce              ??         CEh
+00102031 ab              ??         ABh
+00102032 83              ??         83h
+00102033 00              ??         00h
+00102034 00              ??         00h
+00102035 00              ??         00h
+00102036 00              ??         00h
+00102037 00              ??         00h
+</code></pre><p>So we can calculate the value of <code>uVar1</code> in the <code>huuu</code> function using the following Python code:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>data</span> <span class=o>=</span> <span class=s2>&#34;ADh,9Bh,9Dh,A8h,9Fh,92h,85h,89h,CAh,A7h,A1h,C9h,CEh,A1h,96h,CAh,8Ch,BAh,A1h,B8h,CEh,ACh,A1h,A7h,CEh,ABh,83h&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>DAT</span> <span class=o>=</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl><span class=k>for</span> <span class=n>item</span> <span class=ow>in</span> <span class=n>data</span><span class=o>.</span><span class=n>split</span><span class=p>(</span><span class=s2>&#34;,&#34;</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>DAT</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=nb>int</span><span class=p>(</span><span class=n>item</span><span class=o>.</span><span class=n>replace</span><span class=p>(</span><span class=s1>&#39;h&#39;</span><span class=p>,</span> <span class=s1>&#39;&#39;</span><span class=p>),</span> <span class=mi>16</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>flag</span> <span class=o>=</span> <span class=s2>&#34;&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>offset</span> <span class=o>=</span> <span class=mh>0xfe</span>
+</span></span><span class=line><span class=cl><span class=k>for</span> <span class=n>i</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=n>DAT</span><span class=p>)):</span>
+</span></span><span class=line><span class=cl>    <span class=n>flag</span> <span class=o>+=</span> <span class=nb>chr</span><span class=p>(</span><span class=n>DAT</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>^</span> <span class=n>offset</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=n>flag</span><span class=p>)</span>
 </span></span></code></pre></div></article></div><div class="column is-hidden-mobile"><div class=sidebar id=toc><div class="post post-toc" id=post-toc></div></div></div></div></div></div></section></div><footer class=footer><div class="content has-text-centered"><p>Powered by <a href=https://gohugo.io>Hugo</a>. Theme <a href=https://www.github.com/wlh320/hugo-theme-hulga>Hulga</a></p><p>Copyright © 2020 wlh. All rights reserved.</p></div></footer><script src=https://Ma1icious.github.io/js/pwa.min.js></script>
 <script src=https://cdn.jsdelivr.net/npm/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js></script><script>addBackToTop({diameter:42,backgroundColor:"#1793d0",innerHTML:'<svg viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>',textColor:"#fff"})</script>
 <script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{const e=Array.prototype.slice.call(document.querySelectorAll(".navbar-burger"),0);e.length>0&&e.forEach(e=>{e.addEventListener("click",()=>{const t=e.dataset.target,n=document.getElementById(t);e.classList.toggle("is-active"),n.classList.toggle("is-active")})})})</script><link id=hlcss rel=stylesheet type=text/css><script>function addCss(e){var t=document.getElementById("hlcss");t.href=e}var darkcss="https://Ma1icious.github.io/css/monokai.css",lightcss="https://Ma1icious.github.io/css/monokailight.css";window.matchMedia("(prefers-color-scheme)").media==="not all"?addCss(lightcss):addCss(window.matchMedia("(prefers-color-scheme: dark)").matches?darkcss:lightcss),window.matchMedia("(prefers-color-scheme: dark)").addListener(e=>e.matches&&addCss(darkcss)),window.matchMedia("(prefers-color-scheme: light)").addListener(e=>e.matches&&addCss(lightcss))</script><script src=https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js></script><script>anchors.options={placement:"left",icon:"#"},anchors.add(".content h1, .content h2, .content h3")</script>
