@@ -470,7 +470,82 @@
 </span></span><span class=line><span class=cl>    <span class=n>flag</span> <span class=o>+=</span> <span class=nb>chr</span><span class=p>(</span><span class=n>DAT</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>^</span> <span class=n>offset</span><span class=p>)</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=n>flag</span><span class=p>)</span>
-</span></span></code></pre></div></article></div><div class="column is-hidden-mobile"><div class=sidebar id=toc><div class="post post-toc" id=post-toc></div></div></div></div></div></div></section></div><footer class=footer><div class="content has-text-centered"><p>Powered by <a href=https://gohugo.io>Hugo</a>. Theme <a href=https://www.github.com/wlh320/hugo-theme-hulga>Hulga</a></p><p>Copyright © 2020 wlh. All rights reserved.</p></div></footer><script src=https://Ma1icious.github.io/js/pwa.min.js></script>
+</span></span></code></pre></div><h3 id=damn-windows>damn windows</h3><p>First download the file from <a href=https://github.com/SecurityValley/PublicCTFChallenges/tree/master/reversing/damn_windows>github</a>.</p><p>This file is an pe file, so we should test this file on windows.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>PS C:<span class=se>\U</span>sers<span class=se>\m</span>a1icious<span class=se>\D</span>esktop&gt; .<span class=se>\0</span>1.exe
+</span></span><span class=line><span class=cl>can you deal with a more complex language <span class=k>then</span> C?
+</span></span><span class=line><span class=cl>please enter the password
+</span></span><span class=line><span class=cl>ma1icious
+</span></span><span class=line><span class=cl>2023/05/20 16:46:06 wrong password kid
+</span></span></code></pre></div><p>We use Ghidra to decompile this pe file. Search the hexadecimal of the string <code>wrong</code> and find the following code:</p><pre tabindex=0><code class=language-assembly data-lang=assembly>  DAT_004b26d7                                    XREF[2]:     main.(*PasswordService).Validate
+                                                               main.(*PasswordService).Validate
+004b26d7 77              ??         77h    w
+004b26d8 72              ??         72h    r
+004b26d9 6f              ??         6Fh    o
+004b26da 6e              ??         6Eh    n
+004b26db 67              ??         67h    g
+004b26dc 20              ??         20h     
+004b26dd 70              ??         70h    p
+004b26de 61              ??         61h    a
+004b26df 73              ??         73h    s
+004b26e0 73              ??         73h    s
+004b26e1 77              ??         77h    w
+004b26e2 6f              ??         6Fh    o
+004b26e3 72              ??         72h    r
+004b26e4 64              ??         64h    d
+004b26e5 20              ??         20h     
+004b26e6 6b              ??         6Bh    k
+004b26e7 69              ??         69h    i
+004b26e8 64              ??         64h    d
+</code></pre><p>Jump to the function that references the string.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=n>undefined</span>  <span class=p>[</span><span class=mi>32</span><span class=p>]</span> <span class=n>main</span><span class=p>.(</span><span class=o>*</span><span class=n>PasswordService</span><span class=p>).</span><span class=nf>Validate</span><span class=p>(</span><span class=n>undefined8</span> <span class=n>param_1</span><span class=p>,</span><span class=n>undefined8</span> <span class=n>param_2</span><span class=p>,</span><span class=kt>int</span> <span class=n>param_3</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=kt>char</span> <span class=n>cVar1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=kt>int</span> <span class=n>iVar2</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>undefined8</span> <span class=o>*</span><span class=n>puVar3</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>undefined</span> <span class=n>auVar4</span> <span class=p>[</span><span class=mi>32</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>  <span class=n>undefined</span> <span class=n>auVar5</span> <span class=p>[</span><span class=mi>16</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>  <span class=n>undefined8</span> <span class=n>param_11</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>undefined</span> <span class=n>local_48</span> <span class=p>[</span><span class=mi>16</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>  <span class=n>undefined</span> <span class=n>local_38</span> <span class=p>[</span><span class=mi>16</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>  <span class=n>undefined</span> <span class=n>local_28</span> <span class=p>[</span><span class=mi>16</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>  <span class=n>undefined</span> <span class=n>local_18</span> <span class=p>[</span><span class=mi>16</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>  
+</span></span><span class=line><span class=cl>  <span class=k>while</span> <span class=p>(</span><span class=n>param_11</span> <span class=o>=</span> <span class=n>param_2</span><span class=p>,</span> <span class=n>local_18</span> <span class=o>+</span> <span class=mi>8</span> <span class=o>&lt;=</span> <span class=n>CURRENT_G</span><span class=p>.</span><span class=n>stackguard0</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>runtime</span><span class=p>.</span><span class=nf>morestack_noctxt</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=n>param_2</span> <span class=o>=</span> <span class=n>param_11</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=n>local_48</span><span class=p>.</span><span class=n>_8_8_</span> <span class=o>=</span> <span class=mi>6</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>local_48</span><span class=p>.</span><span class=n>_0_8_</span> <span class=o>=</span> <span class=o>&amp;</span><span class=n>DAT_004b00a8</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>local_38</span><span class=p>.</span><span class=n>_8_8_</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>local_38</span><span class=p>.</span><span class=n>_0_8_</span> <span class=o>=</span> <span class=o>&amp;</span><span class=n>DAT_004afb6e</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>local_28</span><span class=p>.</span><span class=n>_8_8_</span> <span class=o>=</span> <span class=mh>0xc</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>local_28</span><span class=p>.</span><span class=n>_0_8_</span> <span class=o>=</span> <span class=o>&amp;</span><span class=n>DAT_004b1275</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>local_18</span><span class=p>.</span><span class=n>_8_8_</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>local_18</span><span class=p>.</span><span class=n>_0_8_</span> <span class=o>=</span> <span class=o>&amp;</span><span class=n>DAT_004afb6f</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>auVar5</span> <span class=o>=</span> <span class=n>strings</span><span class=p>.</span><span class=nf>Join</span><span class=p>(</span><span class=n>local_48</span><span class=p>,</span><span class=mi>4</span><span class=p>,</span><span class=mi>4</span><span class=p>,</span><span class=mi>0</span><span class=p>,</span><span class=mi>0</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=k>if</span> <span class=p>((</span><span class=n>auVar5</span><span class=p>.</span><span class=n>_8_8_</span> <span class=o>==</span> <span class=n>param_3</span><span class=p>)</span> <span class=o>&amp;&amp;</span> <span class=p>(</span><span class=n>cVar1</span> <span class=o>=</span> <span class=n>runtime</span><span class=p>.</span><span class=nf>memequal</span><span class=p>(</span><span class=n>param_2</span><span class=p>,</span><span class=n>auVar5</span><span class=p>.</span><span class=n>_0_8_</span><span class=p>),</span> <span class=n>cVar1</span> <span class=o>!=</span> <span class=sc>&#39;\0&#39;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>  <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>iVar2</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>iVar2</span> <span class=o>=</span> <span class=n>runtime</span><span class=p>.</span><span class=nf>cmpstring</span><span class=p>(</span><span class=n>param_2</span><span class=p>,</span><span class=n>param_3</span><span class=p>,</span><span class=n>auVar5</span><span class=p>.</span><span class=n>_0_8_</span><span class=p>,</span><span class=n>auVar5</span><span class=p>.</span><span class=n>_8_8_</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>iVar2</span> <span class=o>&lt;</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=n>iVar2</span> <span class=o>=</span> <span class=o>-</span><span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=n>iVar2</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=k>if</span> <span class=p>(</span><span class=n>iVar2</span> <span class=o>!=</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>puVar3</span> <span class=o>=</span> <span class=p>(</span><span class=n>undefined8</span> <span class=o>*</span><span class=p>)</span><span class=n>runtime</span><span class=p>.</span><span class=nf>newobject</span><span class=p>(</span><span class=o>&amp;</span><span class=n>errors</span><span class=p>.</span><span class=n>errorString___runtime</span><span class=p>.</span><span class=n>structtype</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>puVar3</span><span class=p>[</span><span class=mi>1</span><span class=p>]</span> <span class=o>=</span> <span class=mh>0x12</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=o>*</span><span class=n>puVar3</span> <span class=o>=</span> <span class=o>&amp;</span><span class=n>DAT_004b26d7</span><span class=p>;</span>    <span class=c1>// wrong password kid
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>auVar4</span><span class=p>.</span><span class=n>_0_16_</span> <span class=o>=</span> <span class=nf>ZEXT816</span><span class=p>(</span><span class=mi>0</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>auVar4</span><span class=p>.</span><span class=n>_16_8_</span> <span class=o>=</span> <span class=o>&amp;</span><span class=n>go</span><span class=p>.</span><span class=n>itab</span><span class=p>.</span><span class=o>*</span><span class=n>errors</span><span class=p>.</span><span class=n>errorString</span><span class=p>,</span><span class=n>error</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>auVar4</span><span class=p>.</span><span class=n>_24_8_</span> <span class=o>=</span> <span class=n>puVar3</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>auVar4</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=nf>ZEXT1632</span><span class=p>(</span><span class=nf>CONCAT88</span><span class=p>(</span><span class=mi>8</span><span class=p>,</span><span class=o>&amp;</span><span class=n>DAT_004b04ef</span><span class=p>));</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>By analyzing the function, we can know that the function concatenates four strings, then compares the concatenated string length with <code>param_3</code>, and compares the content of the string with <code>param_2</code>.</p><p>Let&rsquo;s take a wild guess that <code>param_3</code> is the length of our input string and <code>param_2</code> is the content of our input string.</p><p>So we can get the string (<code>local_48</code> + <code>local_38</code> + <code>local28</code> + <code>local_18</code>) from the assembly code for comparison.</p><p>Fortunately, the string after this combination is Flag.</p></article></div><div class="column is-hidden-mobile"><div class=sidebar id=toc><div class="post post-toc" id=post-toc></div></div></div></div></div></div></section></div><footer class=footer><div class="content has-text-centered"><p>Powered by <a href=https://gohugo.io>Hugo</a>. Theme <a href=https://www.github.com/wlh320/hugo-theme-hulga>Hulga</a></p><p>Copyright © 2020 wlh. All rights reserved.</p></div></footer><script src=https://Ma1icious.github.io/js/pwa.min.js></script>
 <script src=https://cdn.jsdelivr.net/npm/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js></script><script>addBackToTop({diameter:42,backgroundColor:"#1793d0",innerHTML:'<svg viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>',textColor:"#fff"})</script>
 <script type=text/javascript>document.addEventListener("DOMContentLoaded",()=>{const e=Array.prototype.slice.call(document.querySelectorAll(".navbar-burger"),0);e.length>0&&e.forEach(e=>{e.addEventListener("click",()=>{const t=e.dataset.target,n=document.getElementById(t);e.classList.toggle("is-active"),n.classList.toggle("is-active")})})})</script><link id=hlcss rel=stylesheet type=text/css><script>function addCss(e){var t=document.getElementById("hlcss");t.href=e}var darkcss="https://Ma1icious.github.io/css/monokai.css",lightcss="https://Ma1icious.github.io/css/monokailight.css";window.matchMedia("(prefers-color-scheme)").media==="not all"?addCss(lightcss):addCss(window.matchMedia("(prefers-color-scheme: dark)").matches?darkcss:lightcss),window.matchMedia("(prefers-color-scheme: dark)").addListener(e=>e.matches&&addCss(darkcss)),window.matchMedia("(prefers-color-scheme: light)").addListener(e=>e.matches&&addCss(lightcss))</script><script src=https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js></script><script>anchors.options={placement:"left",icon:"#"},anchors.add(".content h1, .content h2, .content h3")</script>
 <link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css integrity="sha256-tn6hZ2YGDv0w1/DaFL4MiUoXuAVclrtFZs13ch3TB9M=" crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js integrity="sha256-1qhJwAgsSPVSSjlQVTewHS49eaoAbOz651dveUANVBI=" crossorigin=anonymous></script>
